@@ -25,3 +25,12 @@ Publish message:
 ```
 mosquitto_pub -h 10.204.82.73 -m "chicken" -t test/espruino
 ```
+
+
+## Docker image
+
+docker build -t van-queue .
+docker tag van-queue:latest 636189516019.dkr.ecr.eu-west-1.amazonaws.com/van-queue:latest
+docker push 636189516019.dkr.ecr.eu-west-1.amazonaws.com/van-queue:latest
+
+
