@@ -1,0 +1,11 @@
+version: '3'
+services:
+  bus:
+    image: eclipse-mosquitto:1.5.5
+    ports:
+    - "1883:1883"
+    - "9001:9001"
+    volumes:
+    - ${PWD}/mosquitto/config:/mosquitto/config
+    - ${PWD}/mosquitto/data:/mosquitto/data
+    - ${PWD}/mosquitto/log:/mosquitto/log
