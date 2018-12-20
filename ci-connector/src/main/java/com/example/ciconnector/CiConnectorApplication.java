@@ -1,5 +1,6 @@
 package com.example.ciconnector;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -12,8 +13,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CiConnectorApplication implements CommandLineRunner {
 
-	String topic        = "Chicken";
-	String content      = "Message from MqttPublishSample";
+	String topic        = "test/espruino";
+	//String content      = "Message from MqttPublishSample";
 	int qos             = 2;
 	String broker       = "tcp://ec2-34-243-3-198.eu-west-1.compute.amazonaws.com:1883";
 	String clientId     = "JavaSample";
@@ -34,14 +35,27 @@ public class CiConnectorApplication implements CommandLineRunner {
 			System.out.println("Connecting to broker: "+broker);
 			sampleClient.connect(connOpts);
 			System.out.println("Connected");
-			System.out.println("Publishing message: "+content);
-			MqttMessage message = new MqttMessage(content.getBytes());
-			message.setQos(qos);
-			sampleClient.publish(topic, message);
-			System.out.println("Message published");
-			sampleClient.disconnect();
-			System.out.println("Disconnected");
-			System.exit(0);
+			while (true) {
+
+				BuildInfo status = new BuildInfo("SUCCESS");
+				ObjectMapper objectMapper = new ObjectMapper();
+
+				String content = objectMapper.writeValueAsString(status);
+
+
+
+				System.out.println("Publishing message: "+content);
+				MqttMessage message = new MqttMessage(content.getBytes());
+				message.setQos(qos);
+				sampleClient.publish(topic, message);
+				System.out.println("Message published");
+
+				Thread.sleep(1 * 1000 * 20);
+			}
+
+//			sampleClient.disconnect();
+//			System.out.println("Disconnected");
+//			System.exit(0);
 		} catch(MqttException me) {
 			System.out.println("reason "+me.getReasonCode());
 			System.out.println("msg "+me.getMessage());
