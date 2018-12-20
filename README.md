@@ -17,13 +17,13 @@ brew install mosquitto
 Subscribe to Topic:
 
 ```
-mosquitto_sub -h 10.204.82.73 -t test/espruino
+mosquitto_sub -h ec2-34-243-3-198.eu-west-1.compute.amazonaws.com -t test/espruino
 ```
 
 Publish message:
 
 ```
-mosquitto_pub -h 10.204.82.73 -m "chicken" -t test/espruino
+mosquitto_pub -h ec2-34-243-3-198.eu-west-1.compute.amazonaws.com -m "chicken" -t test/espruino
 ```
 
 
