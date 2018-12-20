@@ -76,7 +76,7 @@ function flash() {
   }, 500);
 }
 
-function onInit(){
+E.on('init', function() {
   red();
   wifi.connect("O2 Wifi", {}, function(err){
     wifiInitialised = true;
@@ -121,6 +121,4 @@ function onInit(){
 
 
   });
-}
-
-onInit();
+});
