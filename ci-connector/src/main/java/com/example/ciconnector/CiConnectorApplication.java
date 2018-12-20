@@ -14,12 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CiConnectorApplication implements CommandLineRunner {
 
-	String topic        = "test/espruino";
-	//String content      = "Message from MqttPublishSample";
-	int qos             = 2;
-	String broker       = "tcp://ec2-34-243-3-198.eu-west-1.compute.amazonaws.com:1883";
-	String clientId     = "JavaSample";
-	MemoryPersistence persistence = new MemoryPersistence();
+	private MemoryPersistence persistence = new MemoryPersistence();
 
 	public static void main(String[] args) {
 		SpringApplication.run(CiConnectorApplication.class, args);
@@ -30,18 +25,20 @@ public class CiConnectorApplication implements CommandLineRunner {
 		System.out.println("hello world");
 
 		try {
+			String broker = "tcp://ec2-34-243-3-198.eu-west-1.compute.amazonaws.com:1883";
+			String clientId = "JavaSample";
 			MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
 			MqttConnectOptions connOpts = new MqttConnectOptions();
 			connOpts.setCleanSession(true);
-			System.out.println("Connecting to broker: "+broker);
+			System.out.println("Connecting to broker: " + broker);
 			sampleClient.connect(connOpts);
 			System.out.println("Connected");
+
 			while (true) {
 
 				Random random = new Random();
-				Boolean chance = random.nextBoolean();
 
-				BuildStatus status = chance ? BuildStatus.SUCCESS : BuildStatus.FAIL;
+				BuildStatus status = randomValue(BuildStatus.values());
 
 				BuildInfo buildInfo = new BuildInfo(status);
 				ObjectMapper objectMapper = new ObjectMapper();
@@ -51,11 +48,13 @@ public class CiConnectorApplication implements CommandLineRunner {
 
 				System.out.println("Publishing message: "+content);
 				MqttMessage message = new MqttMessage(content.getBytes());
+				int qos = 2;
 				message.setQos(qos);
+				String topic = "test/espruino";
 				sampleClient.publish(topic, message);
 				System.out.println("Message published");
 
-				Thread.sleep(1 * 1000 * 20);
+				Thread.sleep(1 * 1000 * 5);
 			}
 
 //			sampleClient.disconnect();
@@ -69,6 +68,11 @@ public class CiConnectorApplication implements CommandLineRunner {
 			System.out.println("excep "+me);
 			me.printStackTrace();
 		}
+	}
+
+	 public <T> T randomValue(T[] values) {
+		Random mRandom = new Random();
+		return values[mRandom.nextInt(values.length)];
 	}
 }
 

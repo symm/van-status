@@ -2,5 +2,6 @@ package com.example.ciconnector;
 
 public enum BuildStatus {
   SUCCESS,
-  FAIL
+  FAIL,
+  BUILDING,
 }
