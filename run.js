@@ -2,14 +2,21 @@ const neopixel = require("neopixel");
 
 var wifi = require("Wifi");
 
+const INTENSITY = 0.1;
+
 
 function setColour(red, green, blue, white) {
+  red = red * INTENSITY;
+  green = green * INTENSITY;
+  blue = blue * INTENSITY;
+  white = white * INTENSITY;
+
   let data = [];
-  for (var i=0; i< 7; i++) {
+  for (var i=0; i< 6; i++) {
     data.push(green, red, blue, white);
   }
   // because library is special
-  data.push(0, 0);
+  //data.push(0, 0);
   neopixel.write(B15, data);
 }
 
@@ -31,6 +38,14 @@ function green() {
 
 function off() {
   setColour(0, 0, 0, 0);
+}
+
+function clear() {
+  off();
+  off();
+  off();
+  off();
+  off();
 }
 
 function sleep (time) {
@@ -76,7 +91,8 @@ function flash() {
   }, 500);
 }
 
-E.on('init', function() {
+function onInit() {
+  clear();
   red();
   wifi.connect("O2 Wifi", {}, function(err){
     wifiInitialised = true;
@@ -118,7 +134,7 @@ E.on('init', function() {
           break;
       }
     });
-
-
   });
-});
+}
+
+onInit();
