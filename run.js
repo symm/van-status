@@ -37,10 +37,46 @@ function sleep (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
+function rainbow() {
+  // Produce an animated rainbow
+  var rgb = new Uint8ClampedArray(7 * 3);
+  console.log(rgb);
+  var pos = 0;
+  function getPattern() {
+    pos++;
+    for (var i=0;i<rgb.length;) {
+      rgb[i++] = (1 + Math.sin((i+pos)*0.1324)) * 127;
+      rgb[i++] = (1 + Math.sin((i+pos)*0.1654)) * 127;
+      rgb[i++] = (1 + Math.sin((i+pos)*0.1)) * 127;
+      rgb[i++] = 0;
+    }
+    rgb[i++] = 0;
+    rgb[i++] = 0;
+    return rgb;
+  }
+  setInterval(function() {
+    require("neopixel").write(B15, getPattern());
+  }, 100);
+}
+  
+
 var wifiInitialised = false;
 var busInitialised = false;
+var flashOn = false;
+var flasher;
 
-function onInit(){
+function flash() {
+  return setInterval(function() {
+    flashOn = !flashOn;
+    if (flashOn) {
+     blue();
+    } else {
+     off();
+    }
+  }, 500);
+}
+
+E.on('init', function() {
   red();
   wifi.connect("O2 Wifi", {}, function(err){
     wifiInitialised = true;
@@ -62,6 +98,7 @@ function onInit(){
 
     mqtt.on('publish', function (pub) {
       // trigger stuff here
+      clearInterval();
       console.log("topic: "+pub.topic);
       console.log("message: "+pub.message);
       var message = JSON.parse(pub.message);
@@ -69,7 +106,8 @@ function onInit(){
       console.log(status);
       switch (status) {
         case 'BUILDING':
-          amber();
+          flasher = flash();
+          //rainbow();
           break;
         case 'SUCCESS':
           green();
@@ -83,6 +121,4 @@ function onInit(){
 
 
   });
-}
-
-onInit();
+});
