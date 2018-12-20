@@ -46,25 +46,27 @@ public class CiConnectorApplication implements CommandLineRunner {
 			while (true) {
 				Random random = new Random();
 
+				int delay = 1 * 1000 * 10;
+
 				MqttMessage message = buildMessage(new BuildInfo(BuildStatus.BUILDING));
 				System.out.println("Publishing message: "+message.toString());
 				sampleClient.publish("test/espruino", message);
-				Thread.sleep(1 * 1000 * 5);
+				Thread.sleep(delay);
 
 				message = buildMessage(new BuildInfo(BuildStatus.FAIL));
 				System.out.println("Publishing message: "+message.toString());
 				sampleClient.publish("test/espruino", message);
-				Thread.sleep(1 * 1000 * 5);
+				Thread.sleep(delay);
 
 				message = buildMessage(new BuildInfo(BuildStatus.BUILDING));
 				System.out.println("Publishing message: "+message.toString());
 				sampleClient.publish("test/espruino", message);
-				Thread.sleep(1 * 1000 * 5);
+				Thread.sleep(delay);
 
 				message = buildMessage(new BuildInfo(BuildStatus.SUCCESS));
 				System.out.println("Publishing message: "+message.toString());
 				sampleClient.publish("test/espruino", message);
-				Thread.sleep(1 * 1000 * 5);
+				Thread.sleep(delay);
 			}
 
 //			sampleClient.disconnect();
