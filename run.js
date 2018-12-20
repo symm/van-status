@@ -1,4 +1,5 @@
 const neopixel = require("neopixel");
+var wifi = require("Wifi");
 
 function setColour(red, green, blue, white) {
   let data = [];
@@ -12,3 +13,8 @@ function setColour(red, green, blue, white) {
 
 setColour(255, 0, 0, 0);
 
+
+wifi.connect("O2 Wifi", {}, function(ap){
+  console.log("connected:", ap);
+  setColour(0, 255, 0, 0);
+});
