@@ -20,9 +20,18 @@ public class CiConnectorApplication implements CommandLineRunner {
 		SpringApplication.run(CiConnectorApplication.class, args);
 	}
 
+	public MqttMessage buildMessage(BuildInfo buildInfo) throws Exception {
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		String content = objectMapper.writeValueAsString(buildInfo);
+		MqttMessage message = new MqttMessage(content.getBytes());
+		int qos = 2;
+		message.setQos(qos);
+		return message;
+	}
+
 	@Override
 	public void run(String... args) throws Exception {
-		System.out.println("hello world");
 
 		try {
 			String broker = "tcp://ec2-34-243-3-198.eu-west-1.compute.amazonaws.com:1883";
@@ -35,25 +44,26 @@ public class CiConnectorApplication implements CommandLineRunner {
 			System.out.println("Connected");
 
 			while (true) {
-
 				Random random = new Random();
 
-				BuildStatus status = randomValue(BuildStatus.values());
+				MqttMessage message = buildMessage(new BuildInfo(BuildStatus.BUILDING));
+				System.out.println("Publishing message: "+message.toString());
+				sampleClient.publish("test/espruino", message);
+				Thread.sleep(1 * 1000 * 5);
 
-				BuildInfo buildInfo = new BuildInfo(status);
-				ObjectMapper objectMapper = new ObjectMapper();
+				message = buildMessage(new BuildInfo(BuildStatus.FAIL));
+				System.out.println("Publishing message: "+message.toString());
+				sampleClient.publish("test/espruino", message);
+				Thread.sleep(1 * 1000 * 5);
 
-				String content = objectMapper.writeValueAsString(buildInfo);
+				message = buildMessage(new BuildInfo(BuildStatus.BUILDING));
+				System.out.println("Publishing message: "+message.toString());
+				sampleClient.publish("test/espruino", message);
+				Thread.sleep(1 * 1000 * 5);
 
-
-				System.out.println("Publishing message: "+content);
-				MqttMessage message = new MqttMessage(content.getBytes());
-				int qos = 2;
-				message.setQos(qos);
-				String topic = "test/espruino";
-				sampleClient.publish(topic, message);
-				System.out.println("Message published");
-
+				message = buildMessage(new BuildInfo(BuildStatus.SUCCESS));
+				System.out.println("Publishing message: "+message.toString());
+				sampleClient.publish("test/espruino", message);
 				Thread.sleep(1 * 1000 * 5);
 			}
 
