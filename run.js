@@ -18,7 +18,7 @@ function red() {
 }
 
 function amber() {
-  setColour(200, 200, 0, 0);
+  setColour(255, 200, 0, 0);
 }
 
 function blue() {
@@ -52,27 +52,29 @@ function onInit(){
     });
 
     var mqtt = require("MQTT").connect({
-      host: "10.204.82.73",
+      host: "ec2-34-243-3-198.eu-west-1.compute.amazonaws.com",
     });
-    mqtt.subscribe("test/espruino");
-    blue();
+
+    mqtt.on('connected', function () {
+      mqtt.subscribe("test/espruino");
+      blue();
+    });
 
     mqtt.on('publish', function (pub) {
       // trigger stuff here
       console.log("topic: "+pub.topic);
       console.log("message: "+pub.message);
-     // var status = 'FAILED';
-      var status = 'BUILDING';
-      //var status = 'SUCCESS';
-      // var status = pub.message.status;
+      var message = JSON.parse(pub.message);
+      var status = message.status;
+      console.log(status);
       switch (status) {
-        case 'building':
+        case 'BUILDING':
           amber();
           break;
-        case 'passed':
+        case 'SUCCESS':
           green();
           break;
-        case 'failed':
+        case 'FAIL':
         default:
           red();
           break;
