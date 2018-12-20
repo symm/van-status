@@ -1,6 +1,7 @@
 package com.example.ciconnector;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Random;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -37,11 +38,15 @@ public class CiConnectorApplication implements CommandLineRunner {
 			System.out.println("Connected");
 			while (true) {
 
-				BuildInfo status = new BuildInfo("SUCCESS");
+				Random random = new Random();
+				Boolean chance = random.nextBoolean();
+
+				BuildStatus status = chance ? BuildStatus.SUCCESS : BuildStatus.FAIL;
+
+				BuildInfo buildInfo = new BuildInfo(status);
 				ObjectMapper objectMapper = new ObjectMapper();
 
-				String content = objectMapper.writeValueAsString(status);
-
+				String content = objectMapper.writeValueAsString(buildInfo);
 
 
 				System.out.println("Publishing message: "+content);
