@@ -1,1 +1,2 @@
-client/mosquitto_pub
+cd client
+./mosquitto_pub
