@@ -1,1 +1,1 @@
-cd ci-connector && mvn package -Dmaven.test.skip=true
+exit 1
