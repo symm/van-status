@@ -1,2 +1,2 @@
 cd client
-./mosquitto_pub
+LD_LIBRARY_PATH=. ./mosquitto_pub
