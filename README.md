@@ -34,3 +34,19 @@ docker tag van-queue:latest 636189516019.dkr.ecr.eu-west-1.amazonaws.com/van-que
 docker push 636189516019.dkr.ecr.eu-west-1.amazonaws.com/van-queue:latest
 
 
+
+
+### SAving stuff
+
+Do not call the onInit() directly in code.
+
+Do:
+
+reset();
+save();
+
+Load the code using the send button
+save();
+
+power cycle the device
+
